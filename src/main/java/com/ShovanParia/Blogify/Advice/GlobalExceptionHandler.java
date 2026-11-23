@@ -1,5 +1,6 @@
 package com.ShovanParia.Blogify.Advice;
 
+import com.ShovanParia.Blogify.ExceptionHandling.ApiExceptionError;
 import com.ShovanParia.Blogify.ExceptionHandling.CategoryNotFoundException;
 import com.ShovanParia.Blogify.ExceptionHandling.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -30,5 +31,14 @@ public class GlobalExceptionHandler {
     }
 
 
+        //Handle api exception error
+    @ExceptionHandler(ApiExceptionError.class)
+    public ResponseEntity<String> handleUserNotFound(
+            ApiExceptionError exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
 
 }

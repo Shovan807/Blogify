@@ -1,6 +1,7 @@
 package com.ShovanParia.Blogify.Controller;
 
 import com.ShovanParia.Blogify.Dto.UserDto;
+import com.ShovanParia.Blogify.Repository.RoleRepo;
 import com.ShovanParia.Blogify.Service.UserService;
 
 import jakarta.validation.Valid;
@@ -8,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,10 +19,11 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-
+    private  final RoleRepo roleRepo;
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, RoleRepo roleRepo) {
         this.userService = userService;
+        this.roleRepo = roleRepo;
     }
 
     // Create User
@@ -28,10 +31,11 @@ public class UserController {
     public ResponseEntity<UserDto> createUser(
             @Valid @RequestBody UserDto userDto) {
 
-        UserDto created = userService.createUser(userDto);
+        UserDto created = userService.registerNewUser(userDto);
 
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
+
 
     // Update User
     @PutMapping("/{userId}")
@@ -54,6 +58,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+
     // Get All Users
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
@@ -64,6 +69,7 @@ public class UserController {
     }
 
     // Delete User
+   // @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(
             @PathVariable Long userId) {
